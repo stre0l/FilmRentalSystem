@@ -1,0 +1,202 @@
+﻿<Window x:Class="FilmRentalSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FilmRentalSystem"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Система учета проката кинофильмов" 
+        Height="650" Width="1100"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#FF2C3E50" Padding="10">
+            <TextBlock Text="🎬 Система учета проката кинофильмов" 
+                       FontSize="18" FontWeight="Bold" Foreground="White"/>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="10">
+
+            <TabItem Header="Кинотеатры">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                        <Button Content="Добавить" Command="{Binding AddCinemaCommand}" 
+                                Style="{StaticResource ActionButton}" Background="#FF27AE60" Foreground="White"/>
+                        <Button Content="Удалить" Command="{Binding DeleteCinemaCommand}" 
+                                CommandParameter="{Binding SelectedCinema}" Style="{StaticResource ActionButton}" 
+                                Background="#FFE74C3C" Foreground="White"/>
+                        <Button Content="Обновить" Command="{Binding LoadDataCommand}" Style="{StaticResource ActionButton}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Cinemas}" 
+                              SelectedItem="{Binding SelectedCinema}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Margin="5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="150"/>
+                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address}" Width="200"/>
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="100"/>
+                            <DataGridTextColumn Header="Мест" Binding="{Binding SeatCount}" Width="60"/>
+                            <DataGridTextColumn Header="Директор" Binding="{Binding Director}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Фильмы">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                        <Button Content="Добавить" Command="{Binding AddMovieCommand}" 
+                                Style="{StaticResource ActionButton}" Background="#FF27AE60" Foreground="White"/>
+                        <Button Content="Удалить" Command="{Binding DeleteMovieCommand}" 
+                                CommandParameter="{Binding SelectedMovie}" Style="{StaticResource ActionButton}" 
+                                Background="#FFE74C3C" Foreground="White"/>
+                        <Button Content="Обновить" Command="{Binding LoadDataCommand}" Style="{StaticResource ActionButton}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Movies}" 
+                              SelectedItem="{Binding SelectedMovie}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Margin="5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="200"/>
+                            <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="100"/>
+                            <DataGridTextColumn Header="Год" Binding="{Binding ReleaseYear}" Width="80"/>
+                            <DataGridTextColumn Header="Стоимость" Binding="{Binding PurchaseCost, StringFormat='{}{0:C}'}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Аренда">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                        <Button Content="Новая аренда" Command="{Binding AddRentalCommand}" 
+                                Style="{StaticResource ActionButton}" Background="#FF3498DB" Foreground="White"/>
+                        <Button Content="Вернуть фильм" Command="{Binding ReturnRentalCommand}" 
+                                CommandParameter="{Binding SelectedRental}" Style="{StaticResource ActionButton}" 
+                                Background="#FF27AE60" Foreground="White"/>
+                        <Button Content="Обновить" Command="{Binding LoadDataCommand}" Style="{StaticResource ActionButton}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Rentals}" 
+                              SelectedItem="{Binding SelectedRental}"
+                              AutoGenerateColumns="False" IsReadOnly="True" Margin="5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Фильм" Binding="{Binding Movie.Title}" Width="150"/>
+                            <DataGridTextColumn Header="Кинотеатр" Binding="{Binding Cinema.Name}" Width="150"/>
+                            <DataGridTextColumn Header="Начало" Binding="{Binding StartDate, StringFormat='{}{0:dd.MM.yyyy}'}" Width="90"/>
+                            <DataGridTextColumn Header="Окончание" Binding="{Binding EndDate, StringFormat='{}{0:dd.MM.yyyy}'}" Width="90"/>
+                            <DataGridTextColumn Header="Статус" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOverdue}" Value="True">
+                                                <Setter Property="Background" Value="#FFFADBD8"/>
+                                                <Setter Property="Foreground" Value="#FFC0392B"/>
+                                                <Setter Property="Text" Value="ПРОСРОЧЕНО"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsReturned}" Value="True">
+                                                <Setter Property="Background" Value="#FFD5F4E6"/>
+                                                <Setter Property="Foreground" Value="#FF27AE60"/>
+                                                <Setter Property="Text" Value="ВОЗВРАЩЕНО"/>
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsOverdue}" Value="False"/>
+                                                    <Condition Binding="{Binding IsReturned}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Background" Value="#FFEBF5FB"/>
+                                                <Setter Property="Foreground" Value="#FF3498DB"/>
+                                                <Setter Property="Text" Value="АКТИВНА"/>
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Статистика">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Статистика" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Общий доход: " FontWeight="Bold" Width="150"/>
+                            <TextBlock Text="{Binding TotalIncome, StringFormat='{}{0:C}'}" 
+                                       Foreground="Green" FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Всего фильмов: " FontWeight="Bold" Width="150"/>
+                            <TextBlock Text="{Binding TotalMovies}" 
+                                       Foreground="Blue" FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Всего аренд: " FontWeight="Bold" Width="150"/>
+                            <TextBlock Text="{Binding TotalRentals}" 
+                                       Foreground="Purple" FontWeight="Bold"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Grid.Row="2" Background="#FFECF0F1">
+            <StatusBarItem>
+                <TextBlock Text="Статус:"/>
+                <TextBlock Text="{Binding IsBusy}" 
+                           Margin="5,0,0,0" FontWeight="SemiBold"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Text="База данных: SQLite"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}📅 {0:dd.MM.yyyy HH:mm}">
+                            <Binding Source="{x:Static sys:DateTime.Now}"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
